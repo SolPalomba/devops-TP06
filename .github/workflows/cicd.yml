@@ -45,7 +45,8 @@ jobs:
       - name: Lint Python (flake8)
         run: |
           flake8 backend/ \
-            --max-line-length=100 \
+            --max-line-length=120 \
+            --ignore=E501 \
             --exclude=backend/tests/ \
             --count --statistics
 

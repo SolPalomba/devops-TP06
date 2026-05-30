@@ -20,7 +20,7 @@ on:
 # ── Variables globales ────────────────────────────────────
 env:
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/devops-portfolio
-  PYTHON_VERSION: "3.12.3"
+  PYTHON_VERSION: "3.12"
 
 # ── Jobs ──────────────────────────────────────────────────
 jobs:
@@ -44,11 +44,7 @@ jobs:
 
       - name: Lint Python (flake8)
         run: |
-          flake8 backend/ \
-            --max-line-length=120 \
-            --ignore=E501 \
-            --exclude=backend/tests/,venv,_pycache_ \
-            --count --statistics
+          flake8 backend/ --max-line-length=120 --ignore=E501 --exclude=venv,_pycache_,backend/tests/
 
       - name: Lint YAML (yamllint)
         run: |

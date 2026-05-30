@@ -1,6 +1,6 @@
 # ============================================
 # cicd.yml — Pipeline completo CI/CD
-# TP0 7 — Plan DevOps
+# TP07 — Plan DevOps
 # ============================================
 
 name: CI/CD Pipeline
@@ -44,7 +44,10 @@ jobs:
 
       - name: Lint Python (flake8)
         run: |
-          flake8 backend/ --max-line-length=120 --ignore=E501 --exclude=venv,_pycache_,backend/tests/
+          flake8 backend/ \
+            --max-line-length=100 \
+            --exclude=backend/tests/,backend/venv/ \
+            --count --statistics
 
       - name: Lint YAML (yamllint)
         run: |
@@ -93,7 +96,7 @@ jobs:
     name: Build y Push imagen
     runs-on: ubuntu-latest
     needs: test
-    if: "github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'"
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' }}
 
     outputs:
       image-tag: ${{ steps.meta.outputs.tags }}
@@ -149,7 +152,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build-push
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.ref == 'refs/heads/main' }}
     environment: production   # requiere aprobación manual si se configura
 
     steps:

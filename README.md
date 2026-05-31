@@ -1,31 +1,32 @@
-# TP06 — App de notas con Docker Compose
+# DevOps Portfolio — TP0 7: CI/CD
 
-## Descripción
-Aplicación full stack de notas implementada con Docker Compose.
+![CI/CD Pipeline](https://github.com/SolPalomba/devops-TP06/actions/workflows/cicd.yml/badge.svg)
 
-## Arquitectura
-- Frontend: Nginx sirviendo HTML y proxy inverso
-- Backend: Flask API
-- Base de datos: PostgreSQL
+App de notas con pipeline CI/CD completo usando GitHub Actions.
 
-## Servicios
-- notes-frontend → puerto 80
-- notes-backend → API interna
-- notes-db → base de datos
+## Pipeline
 
-## Ejecución
+|   Stage    |       Trigger   | Qué hace                           |
+|-         --|-              --|--                                 -|
+| lint       | todo push       | flake8 en Python, yamllint en YAML |
+| test       | después de lint | pytest con reporte de cobertura    |
+| build-push | main y develop  | docker buildx, push a Docker Hub   |
+| deploy     | solo main       | SSH al servidor, compose pull + up |
 
-```bash
-docker compose up -d --build
+## 4 Secrets requeridos
 
-Verificación
-curl http://localhost/health
+    • DOCKERHUB_USERNAME, 
+    • DOCKERHUB_TOKEN DEPLOY_HOST, 
+    • DEPLOY_USER, 
+    • DEPLOY_SSH_KEY
 
-Healthcheck
-bash scripts/healthcheck.sh
+## Correr tests localmente
 
-Tecnologías utilizadas
-Docker / Docker Compose
-Python / Flask
-PostgreSQL
-Nginx
+Ejecutar en bash
+cd backend
+pip install -r requirements.txt
+pytest tests/ -v --cov=. --cov-report=term-missing
+Estructura del pipeline
+feature/* → lint → test
+develop   → lint → test → build → push
+main      → lint → test → build → push → deploy
